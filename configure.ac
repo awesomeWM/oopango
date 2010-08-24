@@ -18,5 +18,5 @@ lualibdir=`$PKG_CONFIG lua5.1 --define-variable=prefix=${MY_PREFIX} --variable=I
 AC_SUBST([lualibdir])
 AC_MSG_RESULT([$lualibdir])
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile oopango.pc oopango-uninstalled.pc])
 AC_OUTPUT

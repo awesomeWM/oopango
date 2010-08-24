@@ -12,10 +12,13 @@ liboopango_la_LIBADD = @DEPS_LIBS@
 
 include_HEADERS = oopango.h
 
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = oopango.pc
+
 # Make this library loadable by lua
 install-exec-hook:
 	$(MKDIR_P) $(DESTDIR)$(lualibdir)
-	-rm -f $(DESTDIR)$(lualibdir)/oocairo.so
-	$(LN_S) $(libdir)/liboocairo.so $(DESTDIR)$(lualibdir)/oocairo.so
+	-rm -f $(DESTDIR)$(lualibdir)/oopango.so
+	$(LN_S) $(libdir)/liboopango.so $(DESTDIR)$(lualibdir)/oopango.so
 uninstall-local:
-	-rm -f $(DESTDIR)$(lualibdir)/oocairo.so
+	-rm -f $(DESTDIR)$(lualibdir)/oopango.so

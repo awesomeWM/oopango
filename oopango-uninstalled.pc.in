@@ -1,0 +1,18 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+# This and the following four lines should be the only differences to znc.pc.in
+srcdir=@abs_srcdir@
+builddir=@abs_builddir@
+INC_PATH=-I${srcdir}
+mylibdir=${builddir}/.libs -Wl,-rpath,${srcdir}/.libs
+
+Name: oopango
+Description: Pango bindings for lua
+Version: @PACKAGE_VERSION@
+#URL: http://znc.in
+Require: lua5.1
+Libs: -L${mylibdir} -loopango
+Cflags: ${INC_PATH}
