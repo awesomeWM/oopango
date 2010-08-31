@@ -67,6 +67,8 @@ PROPERTY(stretch, stretch_from_lua, stretch_to_lua)
 PROPERTY(gravity, gravity_from_lua, gravity_to_lua)
 PROPERTY(size, luaL_checknumber, lua_pushnumber)
 
+#undef PROPERTY
+
 static int
 font_desc_set_absolute_size(lua_State *L) {
     PangoFontDescription **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_FONT_DESC);
@@ -82,7 +84,11 @@ font_desc_get_size_is_absolute(lua_State *L) {
     return 1;
 }
 
-#undef PROPERTY
+static int
+font_desc_type(lua_State *L) {
+    lua_pushstring(L, "PangoFontDescription");
+    return 1;
+}
 
 #define PROPERTY(name) \
     { "set_" #name, font_desc_set_ ## name }, \
@@ -102,6 +108,7 @@ font_desc_methods[] = {
     PROPERTY(size),
     { "set_absolute_size", font_desc_set_absolute_size },
     { "get_size_is_absolute", font_desc_get_size_is_absolute },
+    { "type", font_desc_type },
     { 0, 0 }
 };
 #undef PROPERTY

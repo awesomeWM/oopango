@@ -154,6 +154,12 @@ layout_set_text(lua_State *L) {
     return 0;
 }
 
+static int
+layout_type(lua_State *L) {
+    lua_pushstring(L, "PangoLayout");
+    return 1;
+}
+
 #define PROPERTY(name) \
     { "set_" #name, font_desc_set_ ## name }, \
     { "get_" #name, font_desc_get_ ## name }
@@ -175,6 +181,7 @@ layout_methods[] = {
     { "get_pixel_size", layout_get_pixel_size },
     { "set_markup", layout_set_markup },
     { "set_text", layout_set_text },
+    { "type", layout_type },
     { 0, 0 }
 };
 #undef PROPERTY
