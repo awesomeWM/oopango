@@ -39,7 +39,7 @@ PROPERTY(stretch, stretch_from_lua, stretch_to_lua)
 
 #define PROPERTY(name) \
     { "set_" #name, font_desc_set_ ## name }, \
-    { "get_" #name, font_desc_get_ ## name } \
+    { "get_" #name, font_desc_get_ ## name }
 
 static const luaL_Reg
 font_desc_methods[] = {
@@ -52,5 +52,6 @@ font_desc_methods[] = {
     PROPERTY(stretch),
     { 0, 0 }
 };
+#undef PROPERTY
 
 /* vi:set ts=4 sw=4 expandtab: */

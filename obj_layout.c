@@ -6,72 +6,27 @@ layout_gc(lua_State *L) {
     return 0;
 }
 
-static int
-layout_set_width(lua_State *L) {
-    PangoLayout **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_LAYOUT);
-    pango_layout_set_width(*obj, luaL_checknumber(L, 2));
-    return 0;
+#define PROPERTY(name, getter, setter) \
+static int \
+font_desc_set_ ## name (lua_State *L) { \
+    PangoLayout **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_LAYOUT); \
+    pango_layout_set_ ## name(*obj, getter(L, 2)); \
+    return 0; \
+} \
+static int \
+font_desc_get_ ## name (lua_State *L) { \
+    PangoLayout **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_LAYOUT); \
+    setter(L, pango_layout_get_ ## name(*obj)); \
+    return 1; \
 }
 
-static int
-layout_get_width(lua_State *L) {
-    PangoLayout **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_LAYOUT);
-    lua_pushnumber(L, pango_layout_get_width(*obj));
-    return 1;
-}
+PROPERTY(width, luaL_checknumber, lua_pushnumber)
+PROPERTY(height, luaL_checknumber, lua_pushnumber)
+PROPERTY(ellipsize, ellipsize_mode_from_lua, ellipsize_mode_to_lua)
+PROPERTY(wrap, wrap_from_lua, wrap_to_lua)
+PROPERTY(alignment, alignment_from_lua, alignment_to_lua)
 
-static int
-layout_set_height(lua_State *L) {
-    PangoLayout **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_LAYOUT);
-    pango_layout_set_height(*obj, luaL_checknumber(L, 2));
-    return 0;
-}
-
-static int
-layout_get_height(lua_State *L) {
-    PangoLayout **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_LAYOUT);
-    lua_pushnumber(L, pango_layout_get_height(*obj));
-    return 1;
-}
-
-static int
-layout_set_ellipsize(lua_State *L) {
-    PangoLayout **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_LAYOUT);
-    pango_layout_set_ellipsize(*obj, ellipsize_mode_from_lua(L, 2));
-    return 0;
-}
-
-static int
-layout_get_ellipsize(lua_State *L) {
-    PangoLayout **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_LAYOUT);
-    return ellipsize_mode_to_lua(L, pango_layout_get_ellipsize(*obj));
-}
-
-static int
-layout_set_wrap(lua_State *L) {
-    PangoLayout **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_LAYOUT);
-    pango_layout_set_wrap(*obj, wrap_from_lua(L, 2));
-    return 0;
-}
-
-static int
-layout_get_wrap(lua_State *L) {
-    PangoLayout **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_LAYOUT);
-    return wrap_to_lua(L, pango_layout_get_wrap(*obj));
-}
-
-static int
-layout_set_alignment(lua_State *L) {
-    PangoLayout **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_LAYOUT);
-    pango_layout_set_alignment(*obj, alignment_from_lua(L, 2));
-    return 0;
-}
-
-static int
-layout_get_alignment(lua_State *L) {
-    PangoLayout **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_LAYOUT);
-    return alignment_to_lua(L, pango_layout_get_alignment(*obj));
-}
+#undef PROPERTY
 
 static int
 layout_get_extents(lua_State *L) {
@@ -128,6 +83,17 @@ layout_set_font_description(lua_State *L) {
 }
 
 static int
+layout_get_font_description(lua_State *L) {
+    PangoLayout **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_LAYOUT);
+    const PangoFontDescription *font_desc = pango_layout_get_font_description(*obj);
+    if (font_desc == NULL)
+        return 0;
+    PangoFontDescription **copy = create_font_desc_userdata(L);
+    *copy = pango_font_description_copy(font_desc);
+    return 1;
+}
+
+static int
 layout_set_markup(lua_State *L) {
     size_t markup_len;
     PangoLayout **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_LAYOUT);
@@ -166,27 +132,28 @@ layout_set_text(lua_State *L) {
     return 0;
 }
 
+#define PROPERTY(name) \
+    { "set_" #name, font_desc_set_ ## name }, \
+    { "get_" #name, font_desc_get_ ## name }
+
 static const luaL_Reg
 layout_methods[] = {
     { "__gc", layout_gc },
-    { "set_width", layout_set_width },
-    { "get_width", layout_get_width },
-    { "set_height", layout_set_height },
-    { "get_height", layout_get_height },
-    { "set_ellipsize", layout_set_ellipsize },
-    { "get_ellipsize", layout_get_ellipsize },
-    { "set_wrap", layout_set_wrap },
-    { "get_wrap", layout_get_wrap },
-    { "set_alignment", layout_set_alignment },
-    { "get_alignment", layout_get_alignment },
+    PROPERTY(width),
+    PROPERTY(height),
+    PROPERTY(ellipsize),
+    PROPERTY(wrap),
+    PROPERTY(alignment),
+    { "set_font_description", layout_set_font_description },
+    { "get_font_description", layout_get_font_description },
     { "get_extents", layout_get_extents },
     { "get_pixel_extents", layout_get_pixel_extents },
     { "get_size", layout_get_size },
     { "get_pixel_size", layout_get_pixel_size },
-    { "set_font_description", layout_set_font_description },
     { "set_markup", layout_set_markup },
     { "set_text", layout_set_text },
     { 0, 0 }
 };
+#undef PROPERTY
 
 /* vi:set ts=4 sw=4 expandtab: */
