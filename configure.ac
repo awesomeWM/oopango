@@ -6,7 +6,7 @@ LT_INIT([disable-static])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 
 AC_PROG_LN_S
-PKG_CHECK_MODULES(DEPS, lua5.1 cairo oocairo pangocairo)
+PKG_CHECK_MODULES(DEPS, lua5.1 cairo oocairo >= 1.3 pangocairo)
 
 AC_MSG_CHECKING([lua library dir])
 # First, we need to figure out the prefix
