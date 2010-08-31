@@ -116,7 +116,7 @@ units_to_double(lua_State *L) {
 
 static int
 cairo_layout_create(lua_State *L) {
-    cairo_t **context = luaL_checkudata(L, 1, MT_NAME_CONTEXT);
+    cairo_t **context = luaL_checkudata(L, 1, OOCAIRO_MT_NAME_CONTEXT);
     PangoLayout **obj = create_layout_userdata(L);
     *obj = pango_cairo_create_layout(*context);
     return 1;
@@ -124,7 +124,7 @@ cairo_layout_create(lua_State *L) {
 
 static int
 cairo_update_layout(lua_State *L) {
-    cairo_t **context = luaL_checkudata(L, 1, MT_NAME_CONTEXT);
+    cairo_t **context = luaL_checkudata(L, 1, OOCAIRO_MT_NAME_CONTEXT);
     PangoLayout **layout = luaL_checkudata(L, 2, OOPANGO_MT_NAME_LAYOUT);
     pango_cairo_update_layout(*context, *layout);
     return 0;
@@ -132,7 +132,7 @@ cairo_update_layout(lua_State *L) {
 
 static int
 cairo_show_layout(lua_State *L) {
-    cairo_t **context = luaL_checkudata(L, 1, MT_NAME_CONTEXT);
+    cairo_t **context = luaL_checkudata(L, 1, OOCAIRO_MT_NAME_CONTEXT);
     PangoLayout **layout = luaL_checkudata(L, 2, OOPANGO_MT_NAME_LAYOUT);
     pango_cairo_show_layout(*context, *layout);
     return 0;
@@ -140,7 +140,7 @@ cairo_show_layout(lua_State *L) {
 
 static int
 cairo_layout_path(lua_State *L) {
-    cairo_t **context = luaL_checkudata(L, 1, MT_NAME_CONTEXT);
+    cairo_t **context = luaL_checkudata(L, 1, OOCAIRO_MT_NAME_CONTEXT);
     PangoLayout **layout = luaL_checkudata(L, 2, OOPANGO_MT_NAME_LAYOUT);
     pango_cairo_layout_path(*context, *layout);
     return 0;
