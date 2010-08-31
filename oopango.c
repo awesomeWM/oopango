@@ -94,6 +94,14 @@ static const PangoStretch stretch_values[] = {
 };
 ENUM_STRING_CONVERT(stretch, PangoStretch)
 
+static const char * const gravity_names[] = {
+    "south", "east", "north", "west", "auto", 0
+};
+static const PangoGravity gravity_values[] = {
+    PANGO_GRAVITY_SOUTH, PANGO_GRAVITY_EAST, PANGO_GRAVITY_NORTH, PANGO_GRAVITY_WEST, PANGO_GRAVITY_AUTO,
+};
+ENUM_STRING_CONVERT(gravity, PangoGravity)
+
 static PangoLayout **
 create_layout_userdata(lua_State *L) {
     PangoLayout **obj = lua_newuserdata(L, sizeof(PangoLayout *));
@@ -200,12 +208,45 @@ cairo_layout_path(lua_State *L) {
     return 0;
 }
 
+static int
+cairo_list_font_families(lua_State *L)
+{
+    PangoFontFamily **families;
+    int i, num;
+    pango_font_map_list_families(pango_cairo_font_map_get_default(), &families, &num);
+
+    lua_newtable(L);
+    for (i = 0; i < num; i++)
+    {
+        PangoFontFamily *font = families[i];
+
+        lua_pushstring(L, pango_font_family_get_name(font));
+
+        lua_newtable(L);
+
+        lua_pushstring(L, "name");
+        lua_pushstring(L, pango_font_family_get_name(font));
+        lua_rawset(L, -3);
+
+        lua_pushstring(L, "monospace");
+        lua_pushboolean(L, pango_font_family_is_monospace(font));
+        lua_rawset(L, -3);
+
+        /* This saves the table for this font family in our returned table */
+        lua_rawset(L, -3);
+    }
+
+    g_free(families);
+    return 1;
+}
+
 static const luaL_Reg
 constructor_funcs[] = {
     { "cairo_layout_create", cairo_layout_create },
     { "cairo_update_layout", cairo_update_layout },
     { "cairo_show_layout", cairo_show_layout },
     { "cairo_layout_path", cairo_layout_path },
+    { "cairo_list_font_families", cairo_list_font_families },
     { "font_description_from_string", font_description_from_string },
     { "font_description_new", font_description_new },
     { "font_description_copy", font_description_copy },

@@ -11,7 +11,16 @@ font_desc_eq(lua_State *L) {
     PangoFontDescription **obj1 = luaL_checkudata(L, 1, OOPANGO_MT_NAME_FONT_DESC);
     PangoFontDescription **obj2 = luaL_checkudata(L, 2, OOPANGO_MT_NAME_FONT_DESC);
     gboolean res = pango_font_description_equal(*obj1, *obj2);
-    lua_pushboolean(L, res ? 1 : 0);
+    lua_pushboolean(L, res);
+    return 1;
+}
+
+static int
+font_desc_tostring(lua_State *L) {
+    PangoFontDescription **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_FONT_DESC);
+    char *name = pango_font_description_to_string(*obj);
+    lua_pushstring(L, name);
+    g_free(name);
     return 1;
 }
 
@@ -34,6 +43,23 @@ PROPERTY(style, style_from_lua, style_to_lua)
 PROPERTY(variant, variant_from_lua, variant_to_lua)
 PROPERTY(weight, weight_from_lua, weight_to_lua)
 PROPERTY(stretch, stretch_from_lua, stretch_to_lua)
+PROPERTY(gravity, gravity_from_lua, gravity_to_lua)
+PROPERTY(size, luaL_checknumber, lua_pushnumber)
+
+static int
+font_desc_set_absolute_size(lua_State *L) {
+    PangoFontDescription **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_FONT_DESC);
+    double size = luaL_checknumber(L, 2);
+    pango_font_description_set_absolute_size(*obj, size);
+    return 0;
+}
+
+static int
+font_desc_get_size_is_absolute(lua_State *L) {
+    PangoFontDescription **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_FONT_DESC);
+    lua_pushboolean(L, pango_font_description_get_size_is_absolute(*obj));
+    return 1;
+}
 
 #undef PROPERTY
 
@@ -45,11 +71,16 @@ static const luaL_Reg
 font_desc_methods[] = {
     { "__gc", font_desc_gc },
     { "__eq", font_desc_eq },
+    { "__tostring", font_desc_tostring },
     PROPERTY(family),
     PROPERTY(style),
     PROPERTY(variant),
     PROPERTY(weight),
     PROPERTY(stretch),
+    PROPERTY(gravity),
+    PROPERTY(size),
+    { "set_absolute_size", font_desc_set_absolute_size },
+    { "get_size_is_absolute", font_desc_get_size_is_absolute },
     { 0, 0 }
 };
 #undef PROPERTY
