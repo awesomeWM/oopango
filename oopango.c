@@ -28,14 +28,17 @@
         return name ## _values[luaL_checkoption(L, pos, 0, name ## _names)]; \
     }
 
+#define ENUM_STRING_CONVERT(name, type) \
+    ENUM_VAL_TO_LUA_STRING_FUNC(name, type) \
+    ENUM_VAL_FROM_LUA_STRING_FUNC(name, type)
+
 static const char * const ellipsize_mode_names[] = {
     "none", "start", "middle", "end", 0
 };
 static const PangoEllipsizeMode ellipsize_mode_values[] = {
     PANGO_ELLIPSIZE_NONE, PANGO_ELLIPSIZE_START, PANGO_ELLIPSIZE_MIDDLE, PANGO_ELLIPSIZE_END
 };
-ENUM_VAL_TO_LUA_STRING_FUNC(ellipsize_mode, PangoEllipsizeMode)
-ENUM_VAL_FROM_LUA_STRING_FUNC(ellipsize_mode, PangoEllipsizeMode)
+ENUM_STRING_CONVERT(ellipsize_mode, PangoEllipsizeMode)
 
 static const char * const wrap_names[] = {
     "word", "char", "word_char", 0
@@ -43,8 +46,7 @@ static const char * const wrap_names[] = {
 static const PangoWrapMode wrap_values[] = {
     PANGO_WRAP_WORD, PANGO_WRAP_CHAR, PANGO_WRAP_WORD_CHAR
 };
-ENUM_VAL_TO_LUA_STRING_FUNC(wrap, PangoWrapMode)
-ENUM_VAL_FROM_LUA_STRING_FUNC(wrap, PangoWrapMode)
+ENUM_STRING_CONVERT(wrap, PangoWrapMode)
 
 static const char * const alignment_names[] = {
     "left", "center", "right", 0
@@ -52,8 +54,45 @@ static const char * const alignment_names[] = {
 static const PangoAlignment alignment_values[] = {
     PANGO_ALIGN_LEFT, PANGO_ALIGN_CENTER, PANGO_ALIGN_RIGHT
 };
-ENUM_VAL_TO_LUA_STRING_FUNC(alignment, PangoAlignment)
-ENUM_VAL_FROM_LUA_STRING_FUNC(alignment, PangoAlignment)
+ENUM_STRING_CONVERT(alignment, PangoAlignment)
+
+static const char * const style_names[] = {
+    "normal", "oblique", "italic", 0
+};
+static const PangoStyle style_values[] = {
+    PANGO_STYLE_NORMAL, PANGO_STYLE_OBLIQUE, PANGO_STYLE_ITALIC
+};
+ENUM_STRING_CONVERT(style, PangoStyle)
+
+static const char * const variant_names[] = {
+    "normal", "small-caps", 0
+};
+static const PangoVariant variant_values[] = {
+    PANGO_VARIANT_NORMAL, PANGO_VARIANT_SMALL_CAPS
+};
+ENUM_STRING_CONVERT(variant, PangoVariant)
+
+static const char * const weight_names[] = {
+    "thin", "ultralight", "light", "book", "normal", "medium", "semibold", "bold", "ultrabold", "heavy", "ultraheavy", 0
+};
+static const PangoWeight weight_values[] = {
+    PANGO_WEIGHT_THIN, PANGO_WEIGHT_ULTRALIGHT, PANGO_WEIGHT_LIGHT, PANGO_WEIGHT_BOOK,
+    PANGO_WEIGHT_NORMAL, PANGO_WEIGHT_MEDIUM, PANGO_WEIGHT_SEMIBOLD, PANGO_WEIGHT_BOLD,
+    PANGO_WEIGHT_ULTRABOLD, PANGO_WEIGHT_HEAVY, PANGO_WEIGHT_ULTRAHEAVY
+};
+ENUM_STRING_CONVERT(weight, PangoWeight);
+
+static const char * const stretch_names[] = {
+    "ultra-condensed", "extra-condensed", "condensed", "semi-condensed", "normal",
+    "semi-expanded", "expanded", "extra-expanded", "ultra-expanded"
+};
+static const PangoStretch stretch_values[] = {
+    PANGO_STRETCH_ULTRA_CONDENSED, PANGO_STRETCH_EXTRA_CONDENSED,
+    PANGO_STRETCH_CONDENSED, PANGO_STRETCH_SEMI_CONDENSED, PANGO_STRETCH_NORMAL,
+    PANGO_STRETCH_SEMI_EXPANDED, PANGO_STRETCH_EXPANDED,
+    PANGO_STRETCH_EXTRA_EXPANDED, PANGO_STRETCH_ULTRA_EXPANDED
+};
+ENUM_STRING_CONVERT(stretch, PangoStretch)
 
 static PangoLayout **
 create_layout_userdata(lua_State *L) {
