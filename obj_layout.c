@@ -120,7 +120,7 @@ layout_set_font_description(lua_State *L) {
     if (!lua_isnil(L, 2))
     {
         PangoFontDescription **font =
-            luaL_checkudata(L, 1, OOPANGO_MT_NAME_FONT_DESC);
+            luaL_checkudata(L, 2, OOPANGO_MT_NAME_FONT_DESC);
         font_desc = *font;
     }
     pango_layout_set_font_description(*obj, font_desc);
