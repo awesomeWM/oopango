@@ -1,0 +1,16 @@
+/.deps/
+/.libs/
+/Makefile
+/Makefile.in
+/aclocal.m4
+/autom4te.cache/
+/config.log
+/config.status
+/config/
+/configure
+/liboopango.la
+/libtool
+/m4/
+/oopango-uninstalled.pc
+/oopango.lo
+/oopango.pc
