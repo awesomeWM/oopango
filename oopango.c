@@ -221,7 +221,6 @@ cairo_list_font_families(lua_State *L)
         PangoFontFamily *font = families[i];
 
         lua_pushstring(L, pango_font_family_get_name(font));
-
         lua_newtable(L);
 
         lua_pushstring(L, "name");
@@ -230,6 +229,36 @@ cairo_list_font_families(lua_State *L)
 
         lua_pushstring(L, "monospace");
         lua_pushboolean(L, pango_font_family_is_monospace(font));
+        lua_rawset(L, -3);
+
+        lua_pushstring(L, "faces");
+        lua_newtable(L);
+
+        PangoFontFace **faces;
+        int n_faces, n;
+        pango_font_family_list_faces(font, &faces, &n_faces);
+        for (n = 0; faces && n < n_faces; n++)
+        {
+            PangoFontFace *face = faces[n];
+
+            lua_pushstring(L, pango_font_face_get_face_name(face));
+            lua_newtable(L);
+
+            lua_pushstring(L, "name");
+            lua_pushstring(L, pango_font_face_get_face_name(face));
+            lua_rawset(L, -3);
+
+            lua_pushstring(L, "description");
+            PangoFontDescription **obj = create_font_desc_userdata(L);
+            *obj = pango_font_face_describe(face);
+            lua_rawset(L, -3);
+
+            /* This adds the current face to the list of faces */
+            lua_rawset(L, -3);
+        }
+        g_free(faces);
+
+        /* This saves "faces" in the table for this family */
         lua_rawset(L, -3);
 
         /* This saves the table for this font family in our returned table */
