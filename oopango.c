@@ -101,6 +101,21 @@ font_description_from_string(lua_State *L) {
 }
 
 static int
+font_description_new(lua_State *L) {
+    PangoFontDescription **obj = create_font_desc_userdata(L);
+    *obj = pango_font_description_new();
+    return 1;
+}
+
+static int
+font_description_copy(lua_State *L) {
+    PangoFontDescription **font = luaL_checkudata(L, 1, OOPANGO_MT_NAME_FONT_DESC);
+    PangoFontDescription **obj = create_font_desc_userdata(L);
+    *obj = pango_font_description_copy(*font);
+    return 1;
+}
+
+static int
 units_from_double(lua_State *L) {
     int res = pango_units_from_double(luaL_checknumber(L, 1));
     lua_pushnumber(L, res);
@@ -153,6 +168,8 @@ constructor_funcs[] = {
     { "cairo_show_layout", cairo_show_layout },
     { "cairo_layout_path", cairo_layout_path },
     { "font_description_from_string", font_description_from_string },
+    { "font_description_new", font_description_new },
+    { "font_description_copy", font_description_copy },
     { "units_from_number", units_from_double },
     { "units_to_number", units_to_double },
     { 0, 0 }
