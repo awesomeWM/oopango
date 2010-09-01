@@ -11,22 +11,13 @@ WFLAGS="$WFLAGS -Wmissing-include-dirs -Wformat-nonliteral -Wformat-security"
 WFLAGS="$WFLAGS -Wmissing-format-attribute -Wstrict-aliasing -pedantic"
 
 CC_CHECK_CFLAGS_APPEND([$WFLAGS])
-AC_PROG_CC_C99
 CC_NOUNDEFINED
+AC_PROG_CC_C99
 LDFLAGS="$LDFLAGS $LDFLAGS_NOUNDEFINED"
 
 AC_PROG_LN_S
 PKG_CHECK_MODULES(DEPS, lua5.1 cairo oocairo >= 1.3 pangocairo)
-
-AC_MSG_CHECKING([lua library dir])
-# First, we need to figure out the prefix
-MY_PREFIX=${prefix}
-if test "x${MY_PREFIX}" = "xNONE" ; then
-	MY_PREFIX=${ac_default_prefix}
-fi
-lualibdir=`$PKG_CONFIG lua5.1 --define-variable=prefix=${MY_PREFIX} --variable=INSTALL_CMOD`
-AC_SUBST([lualibdir])
-AC_MSG_RESULT([$lualibdir])
+LUA_LIBDIR([lua5.1], [AC_SUBST([LUALIBDIR], [$VALUE])])
 
 AC_CONFIG_FILES([Makefile oopango.pc oopango-uninstalled.pc])
 AC_OUTPUT
