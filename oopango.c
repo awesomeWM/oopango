@@ -101,7 +101,7 @@ static const PangoWeight weight_values[] = {
     PANGO_WEIGHT_NORMAL, PANGO_WEIGHT_MEDIUM, PANGO_WEIGHT_SEMIBOLD, PANGO_WEIGHT_BOLD,
     PANGO_WEIGHT_ULTRABOLD, PANGO_WEIGHT_HEAVY, PANGO_WEIGHT_ULTRAHEAVY
 };
-ENUM_STRING_CONVERT(weight, PangoWeight);
+ENUM_STRING_CONVERT(weight, PangoWeight)
 
 static const char * const stretch_names[] = {
     "ultra-condensed", "extra-condensed", "condensed", "semi-condensed", "normal",
@@ -233,11 +233,11 @@ static int
 cairo_list_font_families(lua_State *L)
 {
     PangoFontFamily **families;
-    int i, num;
+    int num;
     pango_font_map_list_families(pango_cairo_font_map_get_default(), &families, &num);
 
     lua_newtable(L);
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         PangoFontFamily *font = families[i];
 
@@ -256,9 +256,9 @@ cairo_list_font_families(lua_State *L)
         lua_newtable(L);
 
         PangoFontFace **faces;
-        int n_faces, n;
+        int n_faces;
         pango_font_family_list_faces(font, &faces, &n_faces);
-        for (n = 0; faces && n < n_faces; n++)
+        for (int n = 0; faces && n < n_faces; n++)
         {
             PangoFontFace *face = faces[n];
 
