@@ -15,9 +15,20 @@ CC_NOUNDEFINED
 AC_PROG_CC_C99
 LDFLAGS="$LDFLAGS $LDFLAGS_NOUNDEFINED"
 
+# Lua gets different names in different distros :(
+PKG_PROG_PKG_CONFIG
+AC_MSG_CHECKING([for lua])
+for lua_name in lua lua5.1
+do
+  PKG_CHECK_EXISTS([$lua_name], [LUA_NAME=$lua_name ; break])
+done
+AS_IF([test "x$LUA_NAME" = "x"],
+      [AC_ERROR([Could not find lua via pkg-config!]) ])
+AC_MSG_RESULT([$LUA_NAME])
+
 AC_PROG_LN_S
-PKG_CHECK_MODULES(DEPS, lua5.1 cairo oocairo >= 1.3 pangocairo)
-LUA_LIBDIR([lua5.1], [AC_SUBST([LUALIBDIR], [$VALUE])])
+PKG_CHECK_MODULES([DEPS], [$LUA_NAME cairo oocairo >= 1.3 pangocairo])
+LUA_LIBDIR([$LUA_NAME], [AC_SUBST([LUALIBDIR], [$VALUE])])
 
 AC_CONFIG_FILES([Makefile oopango.pc oopango-uninstalled.pc])
 AC_OUTPUT
