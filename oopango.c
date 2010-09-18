@@ -30,6 +30,7 @@
 
 #define OOPANGO_MT_NAME_LAYOUT     "b5011104-af8a-11df-b66c-fadbdfd72085"
 #define OOPANGO_MT_NAME_FONT_DESC  "40144036-af8a-11df-b66c-fadbdfd72085"
+#define OOPANGO_MT_NAME_FONT_MAP   "73a92d92-af8a-11df-b66c-fadbdfd72085"
 
 #define ENUM_VAL_TO_LUA_STRING_FUNC(name, type) \
     static int \
@@ -141,6 +142,15 @@ create_font_desc_userdata(lua_State *L) {
     return obj;
 }
 
+static PangoFontMap **
+create_font_map_userdata(lua_State *L) {
+    PangoFontMap **obj = lua_newuserdata(L, sizeof(PangoFontMap *));
+    *obj = 0;
+    luaL_getmetatable(L, OOPANGO_MT_NAME_FONT_MAP);
+    lua_setmetatable(L, -2);
+    return obj;
+}
+
 static void
 push_rect(lua_State *L, PangoRectangle *rect) {
     lua_newtable(L);
@@ -158,6 +168,7 @@ push_rect(lua_State *L, PangoRectangle *rect) {
 }
 
 #include "obj_font_desc.c"
+#include "obj_font_map.c"
 #include "obj_layout.c"
 
 static int
@@ -230,11 +241,20 @@ cairo_layout_path(lua_State *L) {
 }
 
 static int
-cairo_list_font_families(lua_State *L)
+cairo_font_map_get_default(lua_State *L) {
+    PangoFontMap **map = create_font_map_userdata(L);
+    *map = pango_cairo_font_map_get_default();
+    g_object_ref(*map);
+    return 1;
+}
+
+static int
+font_map_list_families(lua_State *L)
 {
     PangoFontFamily **families;
     int num;
-    pango_font_map_list_families(pango_cairo_font_map_get_default(), &families, &num);
+    PangoFontMap **map = luaL_checkudata(L, 1, OOPANGO_MT_NAME_FONT_MAP);
+    pango_font_map_list_families(*map, &families, &num);
 
     lua_newtable(L);
     for (int i = 0; i < num; i++)
@@ -296,7 +316,8 @@ constructor_funcs[] = {
     { "cairo_update_layout", cairo_update_layout },
     { "cairo_show_layout", cairo_show_layout },
     { "cairo_layout_path", cairo_layout_path },
-    { "cairo_list_font_families", cairo_list_font_families },
+    { "cairo_font_map_get_default", cairo_font_map_get_default },
+    { "font_map_list_families", font_map_list_families },
     { "font_description_from_string", font_description_from_string },
     { "font_description_new", font_description_new },
     { "font_description_copy", font_description_copy },
@@ -365,6 +386,8 @@ luaopen_oopango(lua_State *L) {
                             layout_methods);
     create_object_metatable(L, OOPANGO_MT_NAME_FONT_DESC, "pango font description object",
                             font_desc_methods);
+    create_object_metatable(L, OOPANGO_MT_NAME_FONT_MAP, "pango font map object",
+                            font_map_methods);
 
     return 1;
 }
