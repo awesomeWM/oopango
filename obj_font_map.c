@@ -28,6 +28,68 @@ font_map_gc(lua_State *L) {
 }
 
 static int
+font_map_list_families(lua_State *L)
+{
+    PangoFontFamily **families;
+    int num;
+    PangoFontMap **map = luaL_checkudata(L, 1, OOPANGO_MT_NAME_FONT_MAP);
+    pango_font_map_list_families(*map, &families, &num);
+
+    lua_newtable(L);
+    for (int i = 0; i < num; i++)
+    {
+        PangoFontFamily *font = families[i];
+
+        lua_pushnumber(L, lua_objlen(L, -1) + 1);
+        lua_newtable(L);
+
+        lua_pushstring(L, "name");
+        lua_pushstring(L, pango_font_family_get_name(font));
+        lua_rawset(L, -3);
+
+        lua_pushstring(L, "monospace");
+        lua_pushboolean(L, pango_font_family_is_monospace(font));
+        lua_rawset(L, -3);
+
+        lua_pushstring(L, "faces");
+        lua_newtable(L);
+
+        PangoFontFace **faces;
+        int n_faces;
+        pango_font_family_list_faces(font, &faces, &n_faces);
+        for (int n = 0; faces && n < n_faces; n++)
+        {
+            PangoFontFace *face = faces[n];
+
+            lua_pushnumber(L, lua_objlen(L, -1) + 1);
+            lua_newtable(L);
+
+            lua_pushstring(L, "name");
+            lua_pushstring(L, pango_font_face_get_face_name(face));
+            lua_rawset(L, -3);
+
+            lua_pushstring(L, "description");
+            PangoFontDescription **obj = create_font_desc_userdata(L);
+            *obj = pango_font_face_describe(face);
+            lua_rawset(L, -3);
+
+            /* This adds the current face to the list of faces */
+            lua_rawset(L, -3);
+        }
+        g_free(faces);
+
+        /* This saves "faces" in the table for this family */
+        lua_rawset(L, -3);
+
+        /* This saves the table for this font family in our returned table */
+        lua_rawset(L, -3);
+    }
+
+    g_free(families);
+    return 1;
+}
+
+static int
 font_map_type(lua_State *L) {
     lua_pushstring(L, "PangoFontMap");
     return 1;
@@ -36,6 +98,7 @@ font_map_type(lua_State *L) {
 static const luaL_Reg
 font_map_methods[] = {
     { "__gc", font_map_gc },
+    { "list_families", font_map_list_families },
     { "type", font_map_type },
     { 0, 0 }
 };

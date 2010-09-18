@@ -207,71 +207,8 @@ units_to_double(lua_State *L) {
     return 1;
 }
 
-static int
-font_map_list_families(lua_State *L)
-{
-    PangoFontFamily **families;
-    int num;
-    PangoFontMap **map = luaL_checkudata(L, 1, OOPANGO_MT_NAME_FONT_MAP);
-    pango_font_map_list_families(*map, &families, &num);
-
-    lua_newtable(L);
-    for (int i = 0; i < num; i++)
-    {
-        PangoFontFamily *font = families[i];
-
-        lua_pushstring(L, pango_font_family_get_name(font));
-        lua_newtable(L);
-
-        lua_pushstring(L, "name");
-        lua_pushstring(L, pango_font_family_get_name(font));
-        lua_rawset(L, -3);
-
-        lua_pushstring(L, "monospace");
-        lua_pushboolean(L, pango_font_family_is_monospace(font));
-        lua_rawset(L, -3);
-
-        lua_pushstring(L, "faces");
-        lua_newtable(L);
-
-        PangoFontFace **faces;
-        int n_faces;
-        pango_font_family_list_faces(font, &faces, &n_faces);
-        for (int n = 0; faces && n < n_faces; n++)
-        {
-            PangoFontFace *face = faces[n];
-
-            lua_pushstring(L, pango_font_face_get_face_name(face));
-            lua_newtable(L);
-
-            lua_pushstring(L, "name");
-            lua_pushstring(L, pango_font_face_get_face_name(face));
-            lua_rawset(L, -3);
-
-            lua_pushstring(L, "description");
-            PangoFontDescription **obj = create_font_desc_userdata(L);
-            *obj = pango_font_face_describe(face);
-            lua_rawset(L, -3);
-
-            /* This adds the current face to the list of faces */
-            lua_rawset(L, -3);
-        }
-        g_free(faces);
-
-        /* This saves "faces" in the table for this family */
-        lua_rawset(L, -3);
-
-        /* This saves the table for this font family in our returned table */
-        lua_rawset(L, -3);
-    }
-
-    g_free(families);
-    return 1;
-}
-
 static const luaL_Reg
 constructor_funcs[] = {
-    { "font_map_list_families", font_map_list_families },
     { "font_description_from_string", font_description_from_string },
     { "font_description_new", font_description_new },
     { "font_description_copy", font_description_copy },
