@@ -1,7 +1,7 @@
 ACLOCAL_AMFLAGS = -I m4
 AM_CPPFLAGS = @DEPS_CFLAGS@
 
-EXTRA_DIST = obj_layout.c obj_font_desc.c obj_font_map.c
+EXTRA_DIST = obj_layout.c obj_font_desc.c obj_font_map.c pango_cairo.c
 
 lualibdir = $(LUALIBDIR)
 

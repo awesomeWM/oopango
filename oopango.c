@@ -21,8 +21,6 @@
 
 #include "oopango.h"
 #include <pango/pangocairo.h>
-#include <cairo.h>
-#include <oocairo.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -170,6 +168,7 @@ push_rect(lua_State *L, PangoRectangle *rect) {
 #include "obj_font_desc.c"
 #include "obj_font_map.c"
 #include "obj_layout.c"
+#include "pango_cairo.c"
 
 static int
 font_description_from_string(lua_State *L) {
@@ -205,46 +204,6 @@ static int
 units_to_double(lua_State *L) {
     double res = pango_units_to_double(luaL_checknumber(L, 1));
     lua_pushnumber(L, res);
-    return 1;
-}
-
-static int
-cairo_layout_create(lua_State *L) {
-    cairo_t **context = luaL_checkudata(L, 1, OOCAIRO_MT_NAME_CONTEXT);
-    PangoLayout **obj = create_layout_userdata(L);
-    *obj = pango_cairo_create_layout(*context);
-    return 1;
-}
-
-static int
-cairo_update_layout(lua_State *L) {
-    cairo_t **context = luaL_checkudata(L, 1, OOCAIRO_MT_NAME_CONTEXT);
-    PangoLayout **layout = luaL_checkudata(L, 2, OOPANGO_MT_NAME_LAYOUT);
-    pango_cairo_update_layout(*context, *layout);
-    return 0;
-}
-
-static int
-cairo_show_layout(lua_State *L) {
-    cairo_t **context = luaL_checkudata(L, 1, OOCAIRO_MT_NAME_CONTEXT);
-    PangoLayout **layout = luaL_checkudata(L, 2, OOPANGO_MT_NAME_LAYOUT);
-    pango_cairo_show_layout(*context, *layout);
-    return 0;
-}
-
-static int
-cairo_layout_path(lua_State *L) {
-    cairo_t **context = luaL_checkudata(L, 1, OOCAIRO_MT_NAME_CONTEXT);
-    PangoLayout **layout = luaL_checkudata(L, 2, OOPANGO_MT_NAME_LAYOUT);
-    pango_cairo_layout_path(*context, *layout);
-    return 0;
-}
-
-static int
-cairo_font_map_get_default(lua_State *L) {
-    PangoFontMap **map = create_font_map_userdata(L);
-    *map = pango_cairo_font_map_get_default();
-    g_object_ref(*map);
     return 1;
 }
 
@@ -312,11 +271,6 @@ font_map_list_families(lua_State *L)
 
 static const luaL_Reg
 constructor_funcs[] = {
-    { "cairo_layout_create", cairo_layout_create },
-    { "cairo_update_layout", cairo_update_layout },
-    { "cairo_show_layout", cairo_show_layout },
-    { "cairo_layout_path", cairo_layout_path },
-    { "cairo_font_map_get_default", cairo_font_map_get_default },
     { "font_map_list_families", font_map_list_families },
     { "font_description_from_string", font_description_from_string },
     { "font_description_new", font_description_new },
@@ -376,6 +330,10 @@ luaopen_oopango(lua_State *L) {
     lua_pushstring(L, pango_version_string());
     lua_rawset(L, -3);
     add_funcs_to_table(L, constructor_funcs);
+    lua_pushliteral(L, "cairo");
+    lua_newtable(L);
+    add_funcs_to_table(L, cairo_funcs);
+    lua_rawset(L, -3);
 
     lua_pushliteral(L, "PANGO_SCALE");
     lua_pushnumber(L, PANGO_SCALE);
