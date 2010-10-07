@@ -156,6 +156,74 @@ layout_set_text(lua_State *L) {
 }
 
 static int
+layout_get_unknown_glyphs_count(lua_State *L) {
+    PangoLayout **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_LAYOUT);
+    lua_pushnumber(L, pango_layout_get_unknown_glyphs_count(*obj));
+    return 1;
+}
+
+static int
+layout_index_to_pos(lua_State *L) {
+    PangoRectangle pos;
+    PangoLayout **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_LAYOUT);
+    int idx = luaL_checknumber(L, 2);
+    pango_layout_index_to_pos(*obj, idx, &pos);
+    push_rect(L, &pos);
+    return 1;
+}
+
+static int
+layout_index_to_line_x(lua_State *L) {
+    int line, x_pos;
+    PangoLayout **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_LAYOUT);
+    int idx = luaL_checknumber(L, 2);
+    gboolean trailing = lua_toboolean(L, 3);
+    pango_layout_index_to_line_x(*obj, idx, trailing, &line, &x_pos);
+    lua_pushnumber(L, line);
+    lua_pushnumber(L, x_pos);
+    return 2;
+}
+
+static int
+layout_xy_to_index(lua_State *L) {
+    int idx, trail;
+    PangoLayout **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_LAYOUT);
+    int x = luaL_checknumber(L, 2);
+    int y = luaL_checknumber(L, 3);
+    gboolean res = pango_layout_xy_to_index(*obj, x, y, &idx, &trail);
+    lua_pushboolean(L, res);
+    lua_pushnumber(L, idx);
+    lua_pushnumber(L, trail);
+    return 3;
+}
+
+static int
+layout_get_cursor_pos(lua_State *L) {
+    PangoRectangle strong, weak;
+    PangoLayout **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_LAYOUT);
+    int idx = luaL_checknumber(L, 2);
+    pango_layout_get_cursor_pos(*obj, idx, &strong, &weak);
+    push_rect(L, &strong);
+    push_rect(L, &weak);
+    return 2;
+}
+
+static int
+layout_move_cursor_visually(lua_State *L) {
+    int new_idx, new_trail;
+    PangoLayout **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_LAYOUT);
+    gboolean strong = lua_toboolean(L, 2);
+    int old_idx = luaL_checknumber(L, 3);
+    int old_trail = luaL_checknumber(L, 4);
+    gboolean dir = lua_tonumber(L, 5);
+    pango_layout_move_cursor_visually(*obj, strong, old_idx, old_trail,
+            dir ? 1 : -1, &new_idx, &new_trail);
+    lua_pushnumber(L, new_idx);
+    lua_pushnumber(L, new_trail);
+    return 2;
+}
+
+static int
 layout_type(lua_State *L) {
     lua_pushstring(L, "PangoLayout");
     return 1;
@@ -183,6 +251,12 @@ layout_methods[] = {
     { "get_pixel_size", layout_get_pixel_size },
     { "set_markup", layout_set_markup },
     { "set_text", layout_set_text },
+    { "get_unknown_glyphs_count", layout_get_unknown_glyphs_count },
+    { "index_to_pos", layout_index_to_pos },
+    { "index_to_line_x", layout_index_to_line_x },
+    { "xy_to_index", layout_xy_to_index },
+    { "get_cursor_pos", layout_get_cursor_pos },
+    { "move_cursor_visually", layout_move_cursor_visually },
     { "type", layout_type },
     { 0, 0 }
 };
