@@ -47,6 +47,7 @@ PROPERTY(ellipsize, ellipsize_mode_from_lua, ellipsize_mode_to_lua)
 PROPERTY(wrap, wrap_from_lua, wrap_to_lua)
 PROPERTY(alignment, alignment_from_lua, alignment_to_lua)
 PROPERTY(justify, lua_toboolean, lua_pushboolean)
+PROPERTY(single_paragraph_mode, lua_toboolean, lua_pushboolean)
 
 #undef PROPERTY
 
@@ -173,6 +174,7 @@ layout_methods[] = {
     PROPERTY(wrap),
     PROPERTY(alignment),
     PROPERTY(justify),
+    PROPERTY(single_paragraph_mode),
     { "set_font_description", layout_set_font_description },
     { "get_font_description", layout_get_font_description },
     { "get_extents", layout_get_extents },
