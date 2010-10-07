@@ -215,7 +215,7 @@ layout_move_cursor_visually(lua_State *L) {
     gboolean strong = lua_toboolean(L, 2);
     int old_idx = luaL_checknumber(L, 3);
     int old_trail = luaL_checknumber(L, 4);
-    gboolean dir = lua_tonumber(L, 5);
+    gboolean dir = lua_toboolean(L, 5);
     pango_layout_move_cursor_visually(*obj, strong, old_idx, old_trail,
             dir ? 1 : -1, &new_idx, &new_trail);
     lua_pushnumber(L, new_idx);
