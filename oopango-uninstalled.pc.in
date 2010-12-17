@@ -12,7 +12,7 @@ mylibdir=${builddir}/.libs -Wl,-rpath,${srcdir}/.libs
 Name: oopango
 Description: Pango bindings for lua
 Version: @PACKAGE_VERSION@
-#URL: http://znc.in
+URL: http://oocairo.naquadah.org/
 Require: lua5.1
 Libs: -L${mylibdir} -loopango
 Cflags: ${INC_PATH}
