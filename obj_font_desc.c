@@ -84,12 +84,6 @@ font_desc_get_size_is_absolute(lua_State *L) {
     return 1;
 }
 
-static int
-font_desc_type(lua_State *L) {
-    lua_pushstring(L, "PangoFontDescription");
-    return 1;
-}
-
 #define PROPERTY(name) \
     { "set_" #name, font_desc_set_ ## name }, \
     { "get_" #name, font_desc_get_ ## name }
@@ -108,7 +102,6 @@ font_desc_methods[] = {
     PROPERTY(size),
     { "set_absolute_size", font_desc_set_absolute_size },
     { "get_size_is_absolute", font_desc_get_size_is_absolute },
-    { "type", font_desc_type },
     { 0, 0 }
 };
 #undef PROPERTY

@@ -223,12 +223,6 @@ layout_move_cursor_visually(lua_State *L) {
     return 2;
 }
 
-static int
-layout_type(lua_State *L) {
-    lua_pushstring(L, "PangoLayout");
-    return 1;
-}
-
 #define PROPERTY(name) \
     { "set_" #name, font_desc_set_ ## name }, \
     { "get_" #name, font_desc_get_ ## name }
@@ -257,7 +251,6 @@ layout_methods[] = {
     { "xy_to_index", layout_xy_to_index },
     { "get_cursor_pos", layout_get_cursor_pos },
     { "move_cursor_visually", layout_move_cursor_visually },
-    { "type", layout_type },
     { 0, 0 }
 };
 #undef PROPERTY
