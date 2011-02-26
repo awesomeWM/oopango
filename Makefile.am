@@ -23,7 +23,7 @@ TESTS  = test/font_desc.lua
 TESTS += test/font_map.lua
 TESTS += test/general.lua
 TESTS += test/layout.lua
-EXTRA_DIST += $(TESTS) lunit.lua test-setup.lua lunit-console.lua test-loading.lua
+EXTRA_DIST += $(TESTS) lunit.lua lunit-console.lua test-loading.lua
 
 # Make this library loadable by lua
 install-exec-hook:
