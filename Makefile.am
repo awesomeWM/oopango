@@ -15,6 +15,16 @@ include_HEADERS = oopango.h
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = oopango.pc
 
+# TODO: How can this be fixed to work everywhere?
+FOO='/home/psychon/projects/lua-oocairo/.libs/lib?.so'
+FOP='$(LUALIBDIR)/?.so'
+TESTS_ENVIRONMENT = echo 'lunit.main({...})' | LUA_PATH='@srcdir@/?.lua' LUA_CPATH='.libs/lib?.so;$(FOO);$(FOP)' lua -llunit -
+TESTS  = test/font_desc.lua
+TESTS += test/font_map.lua
+TESTS += test/general.lua
+TESTS += test/layout.lua
+EXTRA_DIST += $(TESTS) lunit.lua test-setup.lua lunit-console.lua test-loading.lua
+
 # Make this library loadable by lua
 install-exec-hook:
 	$(MKDIR_P) $(DESTDIR)$(LUALIBDIR)
@@ -22,3 +32,7 @@ install-exec-hook:
 	$(LN_S) $(libdir)/liboopango.so $(DESTDIR)$(LUALIBDIR)/oopango.so
 uninstall-local:
 	-rm -f $(DESTDIR)$(LUALIBDIR)/oopango.so
+
+# Test whether loading oocairo works
+installcheck-local:
+	LUA_PATH='${srcdir}/?.lua' LUA_CPATH='${LUALIBDIR}/?.so' lua ${srcdir}/test-loading.lua
