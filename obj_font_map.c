@@ -22,7 +22,8 @@
 static int
 font_map_gc(lua_State *L) {
     PangoFontMap **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_FONT_MAP);
-    g_object_unref(*obj);
+    if (*obj)
+        g_object_unref(*obj);
     *obj = 0;
     return 0;
 }

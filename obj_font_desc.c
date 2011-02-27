@@ -22,7 +22,8 @@
 static int
 font_desc_gc(lua_State *L) {
     PangoFontDescription **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_FONT_DESC);
-    pango_font_description_free(*obj);
+    if (*obj)
+        pango_font_description_free(*obj);
     *obj = 0;
     return 0;
 }

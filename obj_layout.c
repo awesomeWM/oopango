@@ -21,8 +21,9 @@
 
 static int
 layout_gc(lua_State *L) {
-    cairo_t **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_LAYOUT);
-    g_object_unref(*obj);
+    PangoLayout **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_LAYOUT);
+    if (*obj)
+        g_object_unref(*obj);
     *obj = 0;
     return 0;
 }
