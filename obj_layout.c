@@ -153,6 +153,7 @@ layout_set_text(lua_State *L) {
     PangoLayout **obj = luaL_checkudata(L, 1, OOPANGO_MT_NAME_LAYOUT);
     const char *text = luaL_checklstring(L, 2, &text_len);
     pango_layout_set_text(*obj, text, text_len);
+    pango_layout_set_attributes(*obj, NULL);
     return 0;
 }
 
