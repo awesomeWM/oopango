@@ -7,7 +7,7 @@ lualibdir = $(LUALIBDIR)
 
 lib_LTLIBRARIES = liboopango.la
 liboopango_la_SOURCES = oopango.c
-liboopango_la_LDFLAGS = -version 0:0:0
+liboopango_la_LDFLAGS = -version 0:0:0 -no-undefined
 liboopango_la_LIBADD = @DEPS_LIBS@
 
 include_HEADERS = oopango.h
