@@ -1,4 +1,4 @@
-AC_INIT([oopango], [1.0], [psychon@znc.in])
+AC_INIT([oopango], [1.1], [psychon@znc.in])
 AC_CONFIG_SRCDIR([oopango.c])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([config])

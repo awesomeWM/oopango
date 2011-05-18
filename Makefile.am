@@ -33,6 +33,6 @@ install-exec-hook:
 uninstall-local:
 	-rm -f $(DESTDIR)$(LUALIBDIR)/oopango.so
 
-# Test whether loading oocairo works
+# Test whether loading oopango works
 installcheck-local:
 	LUA_PATH='${srcdir}/?.lua' LUA_CPATH='${LUALIBDIR}/?.so' lua ${srcdir}/test-loading.lua
