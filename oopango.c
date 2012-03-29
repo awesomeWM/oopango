@@ -26,6 +26,12 @@
 #include <stdlib.h>
 #include <assert.h>
 
+#if LUA_VERSION_NUM >= 502
+#define lua_objlen(a, b)      lua_rawlen(a, b)
+#else
+#define lua_rawlen(a, b) do_not_use_lua_rawlen_use_lua_objlen_instead;
+#endif
+
 #define OOPANGO_MT_NAME_LAYOUT     "b5011104-af8a-11df-b66c-fadbdfd72085"
 #define OOPANGO_MT_NAME_FONT_DESC  "40144036-af8a-11df-b66c-fadbdfd72085"
 #define OOPANGO_MT_NAME_FONT_MAP   "73a92d92-af8a-11df-b66c-fadbdfd72085"
